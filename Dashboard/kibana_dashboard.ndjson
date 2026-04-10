@@ -1,0 +1,59 @@
+{
+  "version": "8.9.0",
+  "objects": [
+    {
+      "id": "tip-dashboard-001",
+      "type": "dashboard",
+      "attributes": {
+        "title": "Threat Intelligence Platform – SOC Dashboard",
+        "description": "Real-time view of ingested threat indicators, risk distribution, and blocked IPs.",
+        "panelsJSON": "[{\"version\":\"8.9.0\",\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":8,\"i\":\"1\"},\"panelIndex\":\"1\",\"embeddableConfig\":{},\"panelRefName\":\"panel_1\"},{\"version\":\"8.9.0\",\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":8,\"i\":\"2\"},\"panelIndex\":\"2\",\"embeddableConfig\":{},\"panelRefName\":\"panel_2\"},{\"version\":\"8.9.0\",\"gridData\":{\"x\":0,\"y\":8,\"w\":48,\"h\":12,\"i\":\"3\"},\"panelIndex\":\"3\",\"embeddableConfig\":{},\"panelRefName\":\"panel_3\"}]",
+        "timeRestore": true,
+        "timeTo": "now",
+        "timeFrom": "now-24h",
+        "refreshInterval": {"pause": false, "value": 60000}
+      },
+      "references": [
+        {"name": "panel_1", "type": "visualization", "id": "tip-viz-severity-donut"},
+        {"name": "panel_2", "type": "visualization", "id": "tip-viz-blocked-count"},
+        {"name": "panel_3", "type": "visualization", "id": "tip-viz-indicators-table"}
+      ]
+    },
+    {
+      "id": "tip-viz-severity-donut",
+      "type": "visualization",
+      "attributes": {
+        "title": "Indicators by Severity",
+        "visState": "{\"type\":\"pie\",\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\"},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"segment\",\"params\":{\"field\":\"severity\",\"size\":5}}],\"params\":{\"isDonut\":true,\"legendPosition\":\"right\"}}"
+      },
+      "references": [{"name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern", "id": "tip-index-pattern"}]
+    },
+    {
+      "id": "tip-viz-blocked-count",
+      "type": "visualization",
+      "attributes": {
+        "title": "Total Blocked IPs (Last 24h)",
+        "visState": "{\"type\":\"metric\",\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\"}],\"params\":{\"filter\":{\"query\":\"blocked:true\",\"language\":\"kuery\"}}}"
+      },
+      "references": [{"name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern", "id": "tip-index-pattern"}]
+    },
+    {
+      "id": "tip-viz-indicators-table",
+      "type": "visualization",
+      "attributes": {
+        "title": "Recent High-Risk Indicators",
+        "visState": "{\"type\":\"table\",\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\"},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"indicator\",\"size\":50,\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"severity\",\"size\":5}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"source\",\"size\":5}},{\"id\":\"5\",\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"blocked\",\"size\":2}}]}"
+      },
+      "references": [{"name": "kibanaSavedObjectMeta.searchSourceJSON.index", "type": "index-pattern", "id": "tip-index-pattern"}]
+    },
+    {
+      "id": "tip-index-pattern",
+      "type": "index-pattern",
+      "attributes": {
+        "title": "threat-indicators*",
+        "timeFieldName": "last_seen"
+      },
+      "references": []
+    }
+  ]
+}
